@@ -1,0 +1,26 @@
+.donate-cta-section {
+  background: var(--color-mist);
+}
+
+.donate-cta-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.donate-cta-copy .section-title {
+  margin-bottom: 20px;
+}
+
+.donate-cta-text {
+  color: var(--color-charcoal-softer);
+  font-size: 1.02rem;
+  max-width: 46ch;
+}
+
+@media (max-width: 900px) {
+  .donate-cta-inner {
+    grid-template-columns: 1fr;
+  }
+}

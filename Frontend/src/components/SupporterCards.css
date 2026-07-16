@@ -1,0 +1,70 @@
+.supporters-section {
+  background: var(--color-charcoal);
+}
+
+.supporters-eyebrow {
+  color: var(--color-gold-light);
+}
+
+.supporters-title {
+  color: var(--color-white);
+}
+
+.supporter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 26px;
+}
+
+.supporter-card {
+  background: var(--color-charcoal-soft);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 34px;
+  position: relative;
+}
+
+.supporter-quote-mark {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  color: var(--color-purple-light);
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.supporter-quote {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  line-height: 1.7;
+  min-height: 110px;
+}
+
+.supporter-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.supporter-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-gold);
+}
+
+.supporter-name {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 0.94rem;
+}
+
+.supporter-role {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
