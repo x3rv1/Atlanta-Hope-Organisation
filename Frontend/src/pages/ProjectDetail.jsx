@@ -66,24 +66,35 @@ export default function ProjectDetail() {
   const progressPercent = targetAmount > 0 ? Math.min(100, Math.round((raisedAmount / targetAmount) * 100)) : 0;
   const blogs = project.blogs || [];
   const donations = project.donations || [];
+  const projectImg = project.image_url || project.image || 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1200&q=80';
 
   return (
     <div className="simple-page" style={{ paddingBottom: '6rem' }}>
-      <header className="page-hero" style={{ padding: '4rem 0 3rem 0', background: 'radial-gradient(ellipse at top, rgba(245,158,11,0.15), transparent 70%)' }}>
+      <header className="page-hero" style={{ padding: '4rem 0 3.5rem 0', background: 'var(--gradient-hero)', borderBottom: '1px solid var(--color-hairline)' }}>
         <div className="container">
           <button 
             onClick={() => navigate('/projects')} 
-            style={{ background: 'none', border: 'none', color: 'var(--color-amber)', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.95rem', fontWeight: 500 }}
+            style={{ background: 'none', border: 'none', color: '#F59E0B', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.95rem', fontWeight: 600 }}
           >
             <ArrowLeft size={16} /> Back to Projects
           </button>
-          <span className="eyebrow">{project.status?.toUpperCase() || 'ACTIVE PROJECT'}</span>
-          <h1 style={{ fontSize: '2.8rem', lineHeight: '1.2', margin: '0.5rem 0 1rem 0' }}>{project.title}</h1>
+          <div style={{ marginBottom: '0.75rem' }}>
+            <span className="eyebrow" style={{ color: '#F59E0B', background: 'rgba(245, 158, 11, 0.18)', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '0.35rem 0.85rem', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 700 }}>
+              {project.status?.toUpperCase() || 'ACTIVE PROJECT'}
+            </span>
+          </div>
+          <h1 style={{ fontSize: '2.8rem', lineHeight: '1.2', margin: '0.75rem 0 1rem 0', color: '#FFFFFF', fontWeight: 800 }}>{project.title}</h1>
         </div>
       </header>
 
       <section className="section simple-page-content" style={{ paddingTop: '2rem' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
+        <div className="container">
+          {/* Project Hero Image */}
+          <div style={{ width: '100%', height: '420px', borderRadius: '20px', overflow: 'hidden', marginBottom: '2.5rem', border: '1px solid var(--color-hairline)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
+            <img src={projectImg} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
           {/* Main Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Overview Card */}
@@ -178,7 +189,8 @@ export default function ProjectDetail() {
             </div>
           </div>
         </div>
-      </section>
-    </div>
-  );
+      </div>
+    </section>
+  </div>
+);
 }
