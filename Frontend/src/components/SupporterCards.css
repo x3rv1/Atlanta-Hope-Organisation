@@ -34,7 +34,7 @@
 
 .supporter-quote {
   margin-top: 6px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #F1F5F9;
   font-size: 1rem;
   line-height: 1.7;
   min-height: 110px;
@@ -64,7 +64,7 @@
 }
 
 .supporter-role {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.8rem;
+  color: #CBD5E1;
+  font-size: 0.85rem;
   margin-top: 2px;
 }
