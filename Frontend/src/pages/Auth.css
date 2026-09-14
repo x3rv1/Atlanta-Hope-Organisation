@@ -24,8 +24,8 @@
 
 .auth-sub {
   margin-top: 10px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.92rem;
+  color: #CBD5E1;
+  font-size: 0.95rem;
 }
 
 .auth-error {
@@ -41,8 +41,8 @@
 .auth-switch {
   margin-top: 22px;
   text-align: center;
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
+  color: #CBD5E1;
 }
 
 .auth-switch a {
@@ -54,9 +54,9 @@
   display: block;
   margin-top: 22px;
   margin-bottom: 8px;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.55);
+  color: #CBD5E1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
