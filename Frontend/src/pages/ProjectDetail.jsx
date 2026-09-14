@@ -87,22 +87,22 @@ export default function ProjectDetail() {
           {/* Main Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Overview Card */}
-            <div style={{ background: 'var(--color-charcoal-soft)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem' }}>
+            <div style={{ background: 'var(--color-charcoal-soft, #1E293B)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem' }}>
               <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>About This Initiative</h2>
-              <p style={{ color: 'var(--color-slate)', lineHeight: '1.8', fontSize: '1.05rem', whiteSpace: 'pre-line' }}>
+              <p style={{ color: '#CBD5E1', lineHeight: '1.8', fontSize: '1.05rem', whiteSpace: 'pre-line' }}>
                 {project.description}
               </p>
             </div>
 
             {/* Related Blog Posts Section */}
-            <div style={{ background: 'var(--color-charcoal-soft)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem' }}>
+            <div style={{ background: 'var(--color-charcoal-soft, #1E293B)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
-                <FileText size={22} color="var(--color-amber)" />
+                <FileText size={22} color="#F59E0B" />
                 <h2 style={{ fontSize: '1.4rem', margin: 0, color: '#fff' }}>Field Reports & Blog Updates</h2>
               </div>
 
               {blogs.length === 0 ? (
-                <p style={{ color: 'var(--color-slate)', fontStyle: 'italic' }}>No blog posts linked to this project yet.</p>
+                <p style={{ color: '#CBD5E1', fontStyle: 'italic' }}>No blog posts linked to this project yet.</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {blogs.map((blog) => (
@@ -110,13 +110,13 @@ export default function ProjectDetail() {
                       key={blog.id}
                       whileHover={{ x: 6 }}
                       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                      style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--color-hairline)' }}
+                      style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '12px', border: '1px solid var(--color-hairline)' }}
                     >
                       <Link to={`/blog/${blog.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <h4 style={{ fontSize: '1.15rem', color: 'var(--color-amber)', marginBottom: '0.5rem' }}>{blog.title}</h4>
-                        <p style={{ fontSize: '0.95rem', color: 'var(--color-slate)', marginBottom: '0.75rem', lineHeight: '1.5' }}>{blog.excerpt}</p>
-                        <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                          <User size={12} /> {blog.author} • <Calendar size={12} /> {blog.created_at?.slice(0, 10)}
+                        <h4 style={{ fontSize: '1.15rem', color: '#F59E0B', marginBottom: '0.5rem' }}>{blog.title}</h4>
+                        <p style={{ fontSize: '0.98rem', color: '#CBD5E1', marginBottom: '0.75rem', lineHeight: '1.5' }}>{blog.excerpt}</p>
+                        <span style={{ fontSize: '0.85rem', color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <User size={12} color="#F59E0B" /> {blog.author} • <Calendar size={12} color="#F59E0B" /> {blog.created_at?.slice(0, 10)}
                         </span>
                       </Link>
                     </motion.div>
@@ -129,21 +129,21 @@ export default function ProjectDetail() {
           {/* Sidebar Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Fundraising Card */}
-            <div style={{ background: 'var(--color-charcoal-soft)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ background: 'var(--color-charcoal-soft, #1E293B)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
-                <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-amber)' }}>Fundraising Goal</span>
+                <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: '#F59E0B', fontWeight: 600 }}>Fundraising Goal</span>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '0.5rem' }}>
                   <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#fff' }}>${raisedAmount.toLocaleString()}</span>
-                  <span style={{ color: 'var(--color-slate)', fontSize: '1.1rem' }}>/ ${targetAmount.toLocaleString()}</span>
+                  <span style={{ color: '#94A3B8', fontSize: '1.1rem' }}>/ ${targetAmount.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div>
                 <div style={{ height: '10px', background: 'rgba(255,255,255,0.1)', borderRadius: '999px', overflow: 'hidden' }}>
-                  <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--color-amber), #f59e0b)', borderRadius: '999px', transition: 'width 1s ease' }} />
+                  <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, #F59E0B, #f59e0b)', borderRadius: '999px', transition: 'width 1s ease' }} />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--color-slate)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.9rem', color: '#CBD5E1' }}>
                   <span>{progressPercent}% Funded</span>
                   <span>{donations.length} Contributions</span>
                 </div>
@@ -159,18 +159,18 @@ export default function ProjectDetail() {
             </div>
 
             {/* Recent Donors List */}
-            <div style={{ background: 'var(--color-charcoal-soft)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '1.5rem' }}>
+            <div style={{ background: 'var(--color-charcoal-soft, #1E293B)', borderRadius: '16px', border: '1px solid var(--color-hairline)', padding: '1.5rem' }}>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={18} color="var(--color-amber)" /> Recent Supporters
+                <CheckCircle2 size={18} color="#F59E0B" /> Recent Supporters
               </h3>
               {donations.length === 0 ? (
-                <p style={{ color: 'var(--color-slate)', fontSize: '0.9rem' }}>Be the first to donate to this project!</p>
+                <p style={{ color: '#CBD5E1', fontSize: '0.9rem' }}>Be the first to donate to this project!</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {donations.slice(0, 5).map((d, idx) => (
-                    <div key={d.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                    <div key={d.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.68rem 0.9rem', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', border: '1px solid var(--color-hairline)' }}>
                       <span style={{ fontWeight: 500, color: '#fff', fontSize: '0.95rem' }}>{d.donor_name}</span>
-                      <span style={{ color: 'var(--color-amber)', fontWeight: 600, fontSize: '0.95rem' }}>${d.amount}</span>
+                      <span style={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.95rem' }}>${d.amount}</span>
                     </div>
                   ))}
                 </div>
