@@ -20,6 +20,10 @@
   --color-gold-light: #FCD34D;
   --color-charcoal-soft: #1F2937;
   --color-charcoal-softer: #374151;
+  --color-slate: #94A3B8;        /* Light slate for muted text on dark cards */
+  --color-slate-light: #CBD5E1;  /* Very light slate for secondary copy on dark cards */
+  --color-amber: #F59E0B;        /* Vibrant amber gold accent */
+  --color-amber-light: #FCD34D;  /* Light amber highlight */
   --color-mist: #F9FAFB;        /* near-white surface for light sections */
   --color-hairline: rgba(255, 255, 255, 0.12);
   --color-hairline-dark: rgba(17, 24, 39, 0.1);
