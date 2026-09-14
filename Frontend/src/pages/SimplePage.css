@@ -33,24 +33,38 @@
 }
 
 .about-value {
-  padding: 26px 0;
-  border-top: 1px solid var(--color-hairline-dark);
+  background: var(--color-charcoal-soft, #1E293B);
+  border: 1px solid var(--color-hairline, rgba(255, 255, 255, 0.12));
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.about-value:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.35);
 }
 
 .about-value h3 {
-  font-size: 1.15rem;
-  color: var(--color-purple-deep);
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  margin-bottom: 8px;
 }
 
 .about-value p {
-  margin-top: 8px;
-  color: var(--color-charcoal-softer);
-  font-size: 0.95rem;
+  margin-top: 6px;
+  color: var(--color-slate-light, #CBD5E1);
+  font-size: 0.98rem;
+  line-height: 1.65;
 }
 
 .about-image {
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-hairline, rgba(255, 255, 255, 0.12));
 }
 
 .about-image img {
@@ -66,11 +80,11 @@
 }
 
 .blog-card {
-  background: var(--color-charcoal-soft, #1e293b);
+  background: var(--color-charcoal-soft, #1E293B);
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--color-hairline, rgba(255,255,255,0.1));
-  box-shadow: 0 8px 30px rgba(17, 24, 39, 0.2);
+  border: 1px solid var(--color-hairline, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
 /* Admin Dashboard Styles */
