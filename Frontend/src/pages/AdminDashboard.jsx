@@ -365,14 +365,14 @@ export default function AdminDashboard() {
             <div className="admin-tab-panel">
               <h2 className="admin-panel-title">Pending Administrator Sign-Up Requests</h2>
               {adminRequests.length === 0 ? (
-                <p style={{ color: 'var(--color-slate)' }}>No pending admin registration requests at this time.</p>
+                <p style={{ color: '#CBD5E1' }}>No pending admin registration requests at this time.</p>
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
                   {adminRequests.map((req) => (
                     <div key={req.id} className="admin-request-card">
                       <div>
                         <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '0.25rem' }}>{req.name}</h4>
-                        <p style={{ color: 'var(--color-slate)', fontSize: '0.9rem', margin: 0 }}>{req.email}</p>
+                        <p style={{ color: '#CBD5E1', fontSize: '0.9rem', margin: 0 }}>{req.email}</p>
                       </div>
                       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                         <button
