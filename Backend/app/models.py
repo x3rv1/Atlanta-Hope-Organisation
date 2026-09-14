@@ -15,6 +15,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='user')
+    status = db.Column(db.String(20), nullable=False, default='approved')  # approved, pending, rejected
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -27,7 +28,8 @@ class User(db.Model):
             'id': self.id,
             'name': self.name,
             'email': self.email,
-            'role': self.role
+            'role': self.role,
+            'status': self.status
         }
 
 class Project(db.Model):
@@ -41,8 +43,9 @@ class Project(db.Model):
     status = db.Column(db.String(20), default='active')  # active, completed, suspended
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
-    # Relationship to donations
+    # Relationships
     donations = db.relationship('Donation', backref='project', lazy=True, cascade="all, delete-orphan")
+    blogs = db.relationship('Blog', backref='project', lazy=True, cascade="all, delete-orphan")
     
     def to_dict(self):
         return {
@@ -52,6 +55,53 @@ class Project(db.Model):
             'target_amount': self.target_amount,
             'raised_amount': self.raised_amount,
             'status': self.status,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+class Blog(db.Model):
+    __tablename__ = 'blogs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    excerpt = db.Column(db.String(300))
+    image_url = db.Column(db.String(255))
+    author = db.Column(db.String(100), default='Atlanta Hope Team')
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content': self.content,
+            'excerpt': self.excerpt,
+            'image_url': self.image_url,
+            'author': self.author,
+            'project_id': self.project_id,
+            'project_title': self.project.title if self.project else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+class CalendarEvent(db.Model):
+    __tablename__ = 'calendar_events'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    location = db.Column(db.String(150))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'start_time': self.start_time.isoformat() if self.start_time else None,
+            'end_time': self.end_time.isoformat() if self.end_time else None,
+            'location': self.location,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -70,7 +120,9 @@ class Donation(db.Model):
             'donor_name': self.donor_name,
             'amount': self.amount,
             'project_id': self.project_id,
-            'timestamp': self.timestamp.isoformat() if self.timestamp else None
+            'projectName': self.project.title if self.project else 'General Fund',
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None,
+            'date': self.timestamp.strftime('%Y-%m-%d') if self.timestamp else ''
         }
 
 class Supporter(db.Model):
