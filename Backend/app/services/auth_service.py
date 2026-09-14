@@ -21,13 +21,25 @@ class AuthService:
         if existing_user:
             return None, "User with this email already exists"
             
-        user = User(name=name, email=email, role=role)
+        status = 'pending' if role == 'admin' else 'approved'
+        user = User(name=name, email=email, role=role, status=status)
         user.set_password(password)
         
         try:
             db.session.add(user)
             db.session.commit()
-            return user.to_dict(), None
+            
+            additional_claims = {
+                "role": user.role,
+                "status": user.status,
+                "name": user.name
+            }
+            access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
+            
+            return {
+                "user": user.to_dict(),
+                "access_token": access_token
+            }, None
         except Exception as e:
             db.session.rollback()
             return None, f"Database error during registration: {str(e)}"
@@ -41,9 +53,16 @@ class AuthService:
         if not user or not user.check_password(password):
             return None, "Invalid email or password"
             
-        # Create JWT access token with role and name in additional claims
+        if user.role == 'admin' and user.status == 'pending':
+            return None, "Your admin registration request is pending approval by an administrator."
+            
+        if user.status == 'rejected':
+            return None, "Your account request has been rejected."
+            
+        # Create JWT access token with role, status, and name in additional claims
         additional_claims = {
             "role": user.role,
+            "status": user.status,
             "name": user.name
         }
         access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
@@ -52,3 +71,45 @@ class AuthService:
             "user": user.to_dict(),
             "access_token": access_token
         }, None
+
+    @staticmethod
+    def get_me(user_id):
+        user = db.session.get(User, user_id)
+        if not user:
+            return None, "User not found"
+        return user.to_dict(), None
+
+    @staticmethod
+    def get_pending_admins():
+        users = User.query.filter_by(role='admin', status='pending').all()
+        return [user.to_dict() for user in users]
+
+    @staticmethod
+    def approve_admin(user_id):
+        user = db.session.get(User, user_id)
+        if not user:
+            return None, "User not found"
+        if user.role != 'admin':
+            return None, "User is not an admin"
+        user.status = 'approved'
+        try:
+            db.session.commit()
+            return user.to_dict(), None
+        except Exception as e:
+            db.session.rollback()
+            return None, f"Database error: {str(e)}"
+
+    @staticmethod
+    def reject_admin(user_id):
+        user = db.session.get(User, user_id)
+        if not user:
+            return None, "User not found"
+        if user.role != 'admin':
+            return None, "User is not an admin"
+        user.status = 'rejected'
+        try:
+            db.session.commit()
+            return user.to_dict(), None
+        except Exception as e:
+            db.session.rollback()
+            return None, f"Database error: {str(e)}"
