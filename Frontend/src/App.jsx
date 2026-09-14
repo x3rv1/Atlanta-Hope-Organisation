@@ -6,12 +6,16 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetail from './pages/ProjectDetail';
 import About from './pages/About';
 import Blog from './pages/Blog';
+import BlogDetail from './pages/BlogDetail';
 import Donate from './pages/Donate';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import CalendarPage from './pages/CalendarPage';
 
 function PageTransition({ children }) {
   return (
@@ -37,8 +41,10 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageTransition><Home /></PageTransition>} />
             <Route path="/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
+            <Route path="/projects/:id" element={<PageTransition><ProjectDetail /></PageTransition>} />
             <Route path="/about" element={<PageTransition><About /></PageTransition>} />
             <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+            <Route path="/blog/:id" element={<PageTransition><BlogDetail /></PageTransition>} />
             <Route path="/donate" element={<PageTransition><Donate /></PageTransition>} />
             <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
             <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
@@ -47,6 +53,22 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <PageTransition><Dashboard /></PageTransition>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <PageTransition><CalendarPage /></PageTransition>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <PageTransition><AdminDashboard /></PageTransition>
                 </ProtectedRoute>
               }
             />
