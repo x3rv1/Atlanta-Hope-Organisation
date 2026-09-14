@@ -13,8 +13,8 @@ def test_register_user_success(client):
     assert response.status_code == 201
     data = response.get_json()
     assert data['success'] is True
-    assert data['data']['email'] == "jane@example.com"
-    assert data['data']['role'] == "user"
+    assert data['data']['user']['email'] == "jane@example.com"
+    assert data['data']['user']['role'] == "user"
 
 def test_register_duplicate_email(client):
     payload = {
