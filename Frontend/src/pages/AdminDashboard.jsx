@@ -135,6 +135,7 @@ export default function AdminDashboard() {
       title: formData.get('title'),
       description: formData.get('description'),
       target_amount: parseFloat(formData.get('target_amount')),
+      image_url: formData.get('image_url'),
       status: formData.get('status'),
     };
 
@@ -602,6 +603,9 @@ export default function AdminDashboard() {
             <form onSubmit={handleSaveProject}>
               <label className="field-label">Project Title</label>
               <input name="title" defaultValue={projectModal.data?.title || ''} className="field-input" required />
+
+              <label className="field-label">Image URL</label>
+              <input name="image_url" defaultValue={projectModal.data?.image_url || ''} className="field-input" placeholder="https://images.unsplash.com/photo-..." />
 
               <label className="field-label">Description</label>
               <textarea name="description" defaultValue={projectModal.data?.description || ''} className="field-input" rows={4} required />
