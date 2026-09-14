@@ -1,87 +1,89 @@
-# Atlanta Hope Organisation — Frontend
+# 🎨 Atlanta Hope Organisation — Frontend
 
-A React (Vite) frontend built to the brief: royal purple / emerald / gold / charcoal
-palette, Playfair Display + Montserrat type, Framer Motion + GSAP motion, a
-particle-network hero, and M-Pesa donations wired to your backend.
+> React 18 + Vite frontend application for the Atlanta Hope Organisation platform.
 
-## One substitution worth knowing
+---
 
-The brief named **Particles.js**, which has no maintained React bindings. This
-build uses **tsParticles** instead — it's the actively maintained successor,
-built by the same author, with the identical "particles + links + cursor
-interactivity" behavior the brief describes. If you specifically need the
-legacy library, swap `src/components/HeroSection.jsx`'s particle block for a
-`react-particles-js` wrapper; everything else is unaffected.
+## 🔗 Live Application
 
-## Getting started
+🌐 **Deployed URL (Vercel):** [https://atlanta-hope-organisation.vercel.app/](https://atlanta-hope-organisation.vercel.app/)
 
+---
+
+## 🌟 Overview & Key Features
+
+* **Interactive Hero Section**: Particle network animations (via `tsParticles`), smooth spotlight tracking, parallax effects, and animated impact counters (`IntersectionObserver`).
+* **M-Pesa STK Push Donation Form**: Instant mobile payment trigger connected directly to the backend.
+* **Project & Blog Showcase**: Dynamic cards with GSAP ScrollTrigger reveal animations.
+* **User & Admin Dashboard**: Authenticated views for tracking donations, managing projects, and approving admin requests.
+* **Responsive & Accessible**: Mobile-first design, dark glassmorphic UI, global `prefers-reduced-motion` compliance.
+
+---
+
+## 🛠️ Getting Started
+
+### Installation
 ```bash
 npm install
+```
+
+### Development Server
+```bash
 npm run dev
 ```
+Runs the local dev server on `http://localhost:5173` and proxies `/api/*` requests to `http://localhost:5000` (configured in `vite.config.js`).
 
-The dev server runs on `http://localhost:5173` and proxies `/api/*` requests
-to `http://localhost:8000` (see `vite.config.js` — change the target to match
-your backend).
-
+### Production Build
 ```bash
-npm run build      # production build to /dist
-npm run preview    # preview the production build locally
+npm run build      # Generates production assets in /dist
+npm run preview    # Previews the production build locally
 ```
 
-## Backend contract expected by this frontend
+---
 
-| Route | Method | Body | Used by |
+## 🔑 Environment Variables
+
+When deploying to Vercel, set the following environment variable in your Vercel Project Settings:
+
+| Variable | Recommended Value | Description |
+| :--- | :--- | :--- |
+| `VITE_API_BASE_URL` | `https://atlanta-hope-organisation-1.onrender.com/api` | Live URL of the deployed Flask backend API |
+
+---
+
+## 📡 Backend API Contract
+
+| Route | Method | Body Payload | Description |
 |---|---|---|---|
-| `/api/payments/mpesa/stkpush` | POST | `{ phoneNumber, amount }` | `DonationForm` — displays `response.message` on success, or `response.data.message` from a rejected request on failure |
-| `/api/projects` | GET | — | Live "Projects Completed" counter, `ProjectCards` |
-| `/api/donations` | GET | — | Live "Lives Impacted" counter, `Dashboard` donation history |
-| `/api/supporters` | GET | — | Live "Active Supporters" counter, `SupporterCards` |
-| `/api/auth/login` | POST | `{ email, password }` → `{ token, user }` | `Login`, `AuthContext` |
-| `/api/auth/register` | POST | `{ name, email, password }` → `{ token, user }` | `Register`, `AuthContext` |
+| `/api/payments/mpesa/stkpush` | POST | `{ phoneNumber, amount }` | Triggers M-Pesa STK Push payment prompt |
+| `/api/projects` | GET | — | Fetches all community projects |
+| `/api/donations` | GET | — | Fetches donation history for counters & dashboard |
+| `/api/supporters` | GET | — | Fetches active community supporters |
+| `/api/blogs` | GET | — | Fetches blog articles & news updates |
+| `/api/calendar` | GET | — | Fetches community events |
+| `/api/auth/login` | POST | `{ email, password }` | Authenticates user and returns JWT token |
+| `/api/auth/register` | POST | `{ name, email, password, role }` | Registers new user account |
 
-Every request automatically carries `Authorization: Bearer <token>` once a
-user has logged in (see `src/api/client.js`). A `401` response clears the
-stored token.
+> Note: All API requests automatically attach `Authorization: Bearer <token>` when a user is authenticated (configured in [`src/api/client.js`](file:///home/xervi/development/code/project/Atlanta-hope/Frontend/src/api/client.js)).
 
-**Every list-fetching component (hero counters, projects, supporters) falls
-back to seeded placeholder data if the backend is unreachable**, so the site
-never looks broken during development — swap in your real backend and it
-takes over automatically.
+---
 
-## Project structure
+## 📂 Project Structure
 
-```
+```text
 src/
-  api/client.js          – axios instance, JWT interceptor, all endpoint calls
-  context/AuthContext.jsx – JWT auth state (login/register/logout)
-  hooks/                  – useCounter, useMagneticButton, useIsMobile
-  components/
-    NavigationBar         – sticky, shrinks on scroll, mobile menu
-    HeroSection            – parallax, particle network, spotlight, magnetic CTAs, slider
-    DonationForm            – M-Pesa STK push form
-    ProjectCards             – GSAP ScrollTrigger reveal + hover
-    SupporterCards            – staggered testimonial grid
-    Footer, ProtectedRoute
-  pages/                     – Home, ProjectsPage, About, Blog, Donate, Login,
-                                Register, Dashboard (protected)
+├── api/
+│   └── client.js            – Axios instance, JWT interceptor, API endpoints
+├── context/
+│   └── AuthContext.jsx      – JWT authentication state & session persistence
+├── hooks/                   – Custom hooks (useCounter, useMagneticButton, useIsMobile)
+├── components/              – UI components (NavigationBar, HeroSection, DonationForm, ProjectCards, etc.)
+└── pages/                  – Home, ProjectsPage, AboutPage, BlogPage, DonatePage, LoginPage, RegisterPage, Dashboard
 ```
 
-## Performance & mobile notes
+---
 
-- Particle network and cursor-tracking effects (spotlight, magnetic buttons)
-  are **disabled below 768px** and replaced with the same entry animations
-  used elsewhere — per the brief's mobile fallback requirement.
-- `prefers-reduced-motion` is respected globally (`index.css`) and specifically
-  in the magnetic-button hook.
-- Fonts are loaded via `<link rel="preconnect">` in `index.html` to keep hero
-  text painting fast.
-- Counters only animate once, triggered by `IntersectionObserver`, so they
-  don't re-fire on every scroll.
+## 🚀 Deployment (Vercel)
 
-## Environment
-
-No `.env` is required for the frontend itself — all backend communication
-goes through the relative `/api` path, so the same build works in any
-environment as long as your reverse proxy / hosting config forwards `/api`
-to your backend.
+This frontend is configured for deployment on Vercel:
+* `vercel.json` provides SPA fallback rewrites (`/* -> /index.html`) so route refreshes work seamlessly.
