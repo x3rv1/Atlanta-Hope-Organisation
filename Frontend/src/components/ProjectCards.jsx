@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,33 +10,40 @@ gsap.registerPlugin(ScrollTrigger);
 
 const FALLBACK_PROJECTS = [
   {
-    id: 'fallback-1',
-    title: 'Westside Meal Program',
-    category: 'Food Security',
-    description: 'Weekly hot meals and grocery packs for 400+ families across Westside Atlanta.',
-    progress: 82,
-    image: 'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&w=800&q=80',
+    id: 1,
+    title: 'Clean Water Initiative',
+    category: 'Water & Health',
+    description: 'Providing filters and clean water access to rural communities in Kenya.',
+    target_amount: 15000,
+    raised_amount: 4500,
+    progress: 30,
+    image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80',
   },
   {
-    id: 'fallback-2',
-    title: 'Youth Literacy Lab',
+    id: 2,
+    title: 'Youth Literacy & STEM Lab',
     category: 'Education',
-    description: 'After-school reading and mentorship for 150 students in under-resourced schools.',
-    progress: 64,
+    description: 'After-school reading, laptops, and mentorship for youth in under-resourced schools.',
+    target_amount: 8000,
+    raised_amount: 5200,
+    progress: 65,
     image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
   },
   {
-    id: 'fallback-3',
-    title: 'Community Health Clinic',
-    category: 'Healthcare',
-    description: 'Free screenings and primary care access for uninsured residents.',
-    progress: 47,
-    image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=800&q=80',
+    id: 3,
+    title: 'Community Food Drive',
+    category: 'Food Security',
+    description: 'Providing hot nutritious meals and family emergency food packages in Atlanta.',
+    target_amount: 5000,
+    raised_amount: 5000,
+    progress: 100,
+    image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
 function ProjectCard({ project, index }) {
   const cardRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -59,16 +67,26 @@ function ProjectCard({ project, index }) {
     return () => ctx.revert();
   }, [index]);
 
+  const progress = project.progress !== undefined 
+    ? project.progress 
+    : project.target_amount > 0 
+      ? Math.min(100, Math.round((project.raised_amount / project.target_amount) * 100)) 
+      : 0;
+
+  const defaultImage = project.image || 'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&w=800&q=80';
+
   return (
     <motion.article
       ref={cardRef}
       className="project-card"
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+      onClick={() => navigate(`/projects/${project.id}`)}
+      style={{ cursor: 'pointer' }}
     >
       <div className="project-card-media">
-        <img src={project.image} alt={project.title} loading="lazy" />
-        <span className="project-card-category">{project.category}</span>
+        <img src={defaultImage} alt={project.title} loading="lazy" />
+        <span className="project-card-category">{project.category || project.status || 'Active'}</span>
       </div>
       <div className="project-card-body">
         <h3 className="project-card-title">{project.title}</h3>
@@ -78,12 +96,17 @@ function ProjectCard({ project, index }) {
             <motion.div
               className="progress-fill"
               initial={{ width: 0 }}
-              whileInView={{ width: `${project.progress}%` }}
+              whileInView={{ width: `${progress}%` }}
               viewport={{ once: true }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
-          <span className="progress-label">{project.progress}% funded</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem', fontSize: '0.85rem' }}>
+            <span className="progress-label">{progress}% funded</span>
+            <span style={{ color: 'var(--color-amber)', fontWeight: 600 }}>
+              ${(project.raised_amount || 0).toLocaleString()} / ${(project.target_amount || 0).toLocaleString()}
+            </span>
+          </div>
         </div>
       </div>
     </motion.article>
@@ -96,13 +119,14 @@ export default function ProjectCards() {
   useEffect(() => {
     let cancelled = false;
     fetchProjects()
-      .then((data) => {
+      .then((res) => {
+        const data = res?.data || res;
         if (!cancelled && Array.isArray(data) && data.length > 0) {
           setProjects(data);
         }
       })
       .catch(() => {
-        // Keep fallback projects if the backend isn't reachable.
+        // Keep fallback projects if backend unavailable
       });
     return () => {
       cancelled = true;
