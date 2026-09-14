@@ -32,7 +32,8 @@ def create_project():
         title=data['title'],
         description=data['description'],
         target_amount=data['target_amount'],
-        status=status
+        status=status,
+        image_url=data.get('image_url')
     )
     
     if create_err:
@@ -49,7 +50,8 @@ def update_project(project_id):
         title=data.get('title'),
         description=data.get('description'),
         target_amount=data.get('target_amount'),
-        status=data.get('status')
+        status=data.get('status'),
+        image_url=data.get('image_url')
     )
     if err:
         return error_response(err, 400)
