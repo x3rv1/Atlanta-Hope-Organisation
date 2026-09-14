@@ -9,7 +9,7 @@ export default defineConfig({
       // Forwards API calls to your backend during local dev.
       // Update the target to match your backend server.
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
     },
