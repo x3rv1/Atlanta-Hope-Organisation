@@ -73,7 +73,7 @@ function ProjectCard({ project, index }) {
       ? Math.min(100, Math.round((project.raised_amount / project.target_amount) * 100)) 
       : 0;
 
-  const defaultImage = project.image || 'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&w=800&q=80';
+  const defaultImage = project.image_url || project.image || 'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&w=800&q=80';
 
   return (
     <motion.article
