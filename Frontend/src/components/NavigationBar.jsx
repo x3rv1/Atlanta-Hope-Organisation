@@ -4,17 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import './NavigationBar.css';
 
-const LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/about', label: 'About' },
-  { to: '/blog', label: 'Blog' },
-];
-
 export default function NavigationBar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +18,21 @@ export default function NavigationBar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navLinks = [
+    { to: '/', label: 'Home' },
+    { to: '/projects', label: 'Projects' },
+    { to: '/about', label: 'About' },
+    { to: '/blog', label: 'Blog' },
+  ];
+
+  if (isAuthenticated) {
+    navLinks.push({ to: '/calendar', label: 'Calendar' });
+  }
+
+  if (isAdmin) {
+    navLinks.push({ to: '/admin', label: 'Admin Dashboard' });
+  }
+
   return (
     <header className={`navbar ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container navbar-inner">
@@ -33,7 +41,7 @@ export default function NavigationBar() {
         </NavLink>
 
         <nav className="navbar-links">
-          {LINKS.map((link) => (
+          {navLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -46,9 +54,14 @@ export default function NavigationBar() {
 
         <div className="navbar-actions">
           {isAuthenticated ? (
-            <button className="navbar-ghost" onClick={logout}>
-              Log Out
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--color-amber)', fontWeight: 500 }}>
+                {user?.name?.split(' ')[0] || 'User'} {user?.role === 'admin' ? '(Admin)' : ''}
+              </span>
+              <button className="navbar-ghost" onClick={logout}>
+                Log Out
+              </button>
+            </div>
           ) : (
             <NavLink to="/login" className="navbar-ghost">
               Log In
@@ -80,7 +93,7 @@ export default function NavigationBar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            {LINKS.map((link) => (
+            {navLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
