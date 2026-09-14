@@ -1,53 +1,107 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { fetchBlogs } from '../api/client';
+import { Calendar, User, ArrowRight } from 'lucide-react';
 import './SimplePage.css';
 
-const POSTS = [
+const FALLBACK_POSTS = [
   {
     id: 1,
-    date: 'June 2026',
-    title: 'Inside the Westside Meal Program',
-    excerpt: 'How 40 volunteers now serve 400 families a week.',
-    image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
+    title: 'Clean Water Reaches 500 Families',
+    excerpt: 'Our latest shipment of water filters arrived safely last week! Thanks to generous donor contributions.',
+    author: 'Director Marcus Vance',
+    image_url: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80',
+    created_at: '2026-08-01',
   },
   {
     id: 2,
-    date: 'May 2026',
-    title: 'What KES 500 Actually Funds',
-    excerpt: 'A transparent breakdown of where every donation tier goes.',
-    image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80',
+    title: 'Literacy Lab Opens Its Doors',
+    excerpt: 'We officially launched the Youth Literacy & STEM Lab yesterday. Students received new laptop tablets and coding workbooks.',
+    author: 'Elena Rostova',
+    image_url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
+    created_at: '2026-07-20',
   },
   {
     id: 3,
-    date: 'April 2026',
-    title: 'Youth Literacy Lab: Term One Results',
-    excerpt: 'Reading scores across our first cohort of 150 students.',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
+    title: '5,000 Hot Meals Delivered This Quarter',
+    excerpt: 'Thanks to our Westside volunteers and kitchen team, we hit a major milestone of delivering 5,000 warm meals.',
+    author: 'Atlanta Hope Team',
+    image_url: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
+    created_at: '2026-06-15',
   },
 ];
 
 export default function Blog() {
+  const [posts, setPosts] = useState(FALLBACK_POSTS);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchBlogs()
+      .then((res) => {
+        const data = res?.data || res;
+        if (!cancelled && Array.isArray(data) && data.length > 0) {
+          setPosts(data);
+        }
+      })
+      .catch(() => {
+        // Keep fallback posts
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="simple-page">
       <header className="page-hero">
         <div className="container">
-          <span className="eyebrow">Updates</span>
+          <span className="eyebrow">Updates & Field Reports</span>
           <h1>Stories From the Field</h1>
-          <p>Reporting on how donations turn into real outcomes across Atlanta.</p>
+          <p>Reporting on how donations turn into real, transparent outcomes across Atlanta and global initiatives.</p>
         </div>
       </header>
 
       <section className="section simple-page-content">
         <div className="container blog-grid">
-          {POSTS.map((post) => (
-            <article className="blog-card" key={post.id}>
-              <img src={post.image} alt={post.title} loading="lazy" />
-              <div className="blog-card-body">
-                <span className="blog-card-date">{post.date}</span>
-                <h3>{post.title}</h3>
-                <p>{post.excerpt}</p>
-              </div>
-            </article>
-          ))}
+          {posts.map((post) => {
+            const img = post.image_url || post.image || 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80';
+            const dateStr = post.created_at ? post.created_at.slice(0, 10) : (post.date || 'Recent');
+            
+            return (
+              <motion.article 
+                className="blog-card" 
+                key={post.id}
+                whileHover={{ y: -8, boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.5)' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                onClick={() => navigate(`/blog/${post.id}`)}
+                style={{ cursor: 'pointer', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+              >
+                <div style={{ width: '100%', height: '220px', overflow: 'hidden' }}>
+                  <img 
+                    src={img} 
+                    alt={post.title} 
+                    loading="lazy" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                  />
+                </div>
+                <div className="blog-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--color-slate)', marginBottom: '0.5rem' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Calendar size={13} /> {dateStr}</span>
+                      {post.author && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><User size={13} /> {post.author}</span>}
+                    </div>
+                    <h3 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.75rem', lineHeight: '1.4' }}>{post.title}</h3>
+                    <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem', lineHeight: '1.6' }}>{post.excerpt}</p>
+                  </div>
+                  <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--color-amber)', fontWeight: 600, fontSize: '0.9rem' }}>
+                    Read Article <ArrowRight size={16} />
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </section>
     </div>
