@@ -39,8 +39,8 @@ export default function BlogDetail() {
   if (loading) {
     return (
       <div className="simple-page" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', color: 'var(--color-slate)' }}>
-          <div className="loading-spinner" style={{ margin: '0 auto 1rem auto', width: '40px', height: '40px', border: '3px solid var(--color-hairline)', borderTopColor: 'var(--color-amber)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <div style={{ textAlign: 'center', color: '#CBD5E1' }}>
+          <div className="loading-spinner" style={{ margin: '0 auto 1rem auto', width: '40px', height: '40px', border: '3px solid var(--color-hairline)', borderTopColor: '#F59E0B', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
           <p>Loading blog post…</p>
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function BlogDetail() {
       <div className="simple-page" style={{ minHeight: '70vh', padding: '6rem 0' }}>
         <div className="container" style={{ textAlign: 'center', maxWidth: '600px' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#f87171' }}>Article Not Found</h2>
-          <p style={{ color: 'var(--color-slate)', marginBottom: '2rem' }}>{error || "The blog post you requested does not exist."}</p>
+          <p style={{ color: '#CBD5E1', marginBottom: '2rem' }}>{error || "The blog post you requested does not exist."}</p>
           <button className="btn btn-explore" onClick={() => navigate('/blog')}>
             <ArrowLeft size={18} style={{ marginRight: '8px' }} /> Back to Blog
           </button>
@@ -70,17 +70,17 @@ export default function BlogDetail() {
         <div className="container" style={{ maxWidth: '800px' }}>
           <button 
             onClick={() => navigate('/blog')} 
-            style={{ background: 'none', border: 'none', color: 'var(--color-amber)', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.95rem', fontWeight: 500 }}
+            style={{ background: 'none', border: 'none', color: '#F59E0B', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.95rem', fontWeight: 500 }}
           >
             <ArrowLeft size={16} /> Back to Blog Updates
           </button>
           
-          <div style={{ display: 'flex', gap: '1.25rem', color: 'var(--color-slate)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Calendar size={15} color="var(--color-amber)" /> {dateStr}</span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><User size={15} color="var(--color-amber)" /> {blog.author || 'Atlanta Hope Team'}</span>
+          <div style={{ display: 'flex', gap: '1.25rem', color: '#94A3B8', fontSize: '0.92rem', marginBottom: '1rem' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Calendar size={15} color="#F59E0B" /> {dateStr}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><User size={15} color="#F59E0B" /> {blog.author || 'Atlanta Hope Team'}</span>
           </div>
 
-          <h1 style={{ fontSize: '2.5rem', lineHeight: '1.3', color: '#fff' }}>{blog.title}</h1>
+          <h1 style={{ fontSize: '2.5rem', lineHeight: '1.3', color: '#FFFFFF' }}>{blog.title}</h1>
         </div>
       </header>
 
@@ -95,23 +95,23 @@ export default function BlogDetail() {
           {blog.project_id && (
             <motion.div 
               whileHover={{ scale: 1.01 }}
-              style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <HeartHandshake size={24} color="var(--color-amber)" />
+                <HeartHandshake size={24} color="#F59E0B" />
                 <div>
-                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-amber)', letterSpacing: '0.5px' }}>Linked Project Initiative</span>
-                  <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff' }}>{blog.project_title || `Project #${blog.project_id}`}</h4>
+                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#F59E0B', letterSpacing: '0.5px', fontWeight: 600 }}>Linked Project Initiative</span>
+                  <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#FFFFFF' }}>{blog.project_title || `Project #${blog.project_id}`}</h4>
                 </div>
               </div>
-              <Link to={`/projects/${blog.project_id}`} style={{ textDecoration: 'none', color: 'var(--color-amber)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.95rem' }}>
+              <Link to={`/projects/${blog.project_id}`} style={{ textDecoration: 'none', color: '#F59E0B', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.95rem' }}>
                 View Project <ChevronRight size={18} />
               </Link>
             </motion.div>
           )}
 
           {/* Article Body Content */}
-          <div style={{ color: 'rgba(255, 255, 255, 0.88)', fontSize: '1.15rem', lineHeight: '1.95', whiteSpace: 'pre-line', background: 'var(--color-charcoal-soft)', padding: '2.5rem', borderRadius: '16px', border: '1px solid var(--color-hairline)' }}>
+          <div style={{ color: '#F1F5F9', fontSize: '1.15rem', lineHeight: '1.95', whiteSpace: 'pre-line', background: 'var(--color-charcoal-soft, #1E293B)', padding: '2.5rem', borderRadius: '16px', border: '1px solid var(--color-hairline)' }}>
             {blog.content}
           </div>
         </div>
