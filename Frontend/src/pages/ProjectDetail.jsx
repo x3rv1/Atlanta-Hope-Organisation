@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchProjectDetails } from '../api/client';
-import { ArrowLeft, Heart, Calendar, User, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Heart, Calendar, User, FileText, CheckCircle2, Share2, Check } from 'lucide-react';
 import './SimplePage.css';
 
 export default function ProjectDetail() {
@@ -11,6 +11,7 @@ export default function ProjectDetail() {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -35,6 +36,14 @@ export default function ProjectDetail() {
       isMounted = false;
     };
   }, [id]);
+
+  function handleShare() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  }
 
   if (loading) {
     return (
@@ -72,12 +81,20 @@ export default function ProjectDetail() {
     <div className="simple-page" style={{ paddingBottom: '6rem' }}>
       <header className="page-hero" style={{ padding: '4rem 0 3.5rem 0', background: 'var(--gradient-hero)', borderBottom: '1px solid var(--color-hairline)' }}>
         <div className="container">
-          <button 
-            onClick={() => navigate('/projects')} 
-            style={{ background: 'none', border: 'none', color: '#F59E0B', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.95rem', fontWeight: 600 }}
-          >
-            <ArrowLeft size={16} /> Back to Projects
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <button 
+              onClick={() => navigate('/projects')} 
+              style={{ background: 'none', border: 'none', color: '#F59E0B', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 600 }}
+            >
+              <ArrowLeft size={16} /> Back to Projects
+            </button>
+            <button 
+              onClick={handleShare} 
+              style={{ background: copied ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.08)', border: `1px solid ${copied ? '#10B981' : 'rgba(255, 255, 255, 0.15)'}`, color: copied ? '#10B981' : '#FFFFFF', padding: '0.5rem 1.1rem', borderRadius: '999px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, transition: 'all 0.2s ease' }}
+            >
+              {copied ? <><Check size={16} /> Link Copied!</> : <><Share2 size={16} color="#F59E0B" /> Share Project</>}
+            </button>
+          </div>
           <div style={{ marginBottom: '0.75rem' }}>
             <span className="eyebrow" style={{ color: '#F59E0B', background: 'rgba(245, 158, 11, 0.18)', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '0.35rem 0.85rem', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 700 }}>
               {project.status?.toUpperCase() || 'ACTIVE PROJECT'}
@@ -166,6 +183,12 @@ export default function ProjectDetail() {
                 style={{ width: '100%', padding: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '1.1rem', fontWeight: 600 }}
               >
                 <Heart size={20} fill="currentColor" /> Donate to this Project
+              </button>
+              <button 
+                onClick={handleShare} 
+                style={{ width: '100%', padding: '0.85rem', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--color-hairline)', borderRadius: '999px', color: '#FFFFFF', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease' }}
+              >
+                {copied ? <><Check size={18} color="#10B981" /> Link Copied to Clipboard!</> : <><Share2 size={18} color="#F59E0B" /> Share Project Link</>}
               </button>
             </div>
 
