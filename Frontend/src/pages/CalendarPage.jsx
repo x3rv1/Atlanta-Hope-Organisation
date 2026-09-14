@@ -116,8 +116,8 @@ export default function CalendarPage() {
           </div>
 
           {/* Role Access Notice */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', padding: '0.75rem 1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid var(--color-hairline)', fontSize: '0.9rem', color: 'var(--color-slate)' }}>
-            <Shield size={16} color="var(--color-amber)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', padding: '0.75rem 1.25rem', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid var(--color-hairline)', fontSize: '0.92rem', color: '#CBD5E1' }}>
+            <Shield size={16} color="#F59E0B" />
             <span>
               {isAdmin ? 'Admin Mode Active: You have full permissions to add, edit, and delete events.' : 'User View Mode: Logged-in users can view all scheduled events.'}
             </span>
@@ -125,12 +125,12 @@ export default function CalendarPage() {
 
           {/* Event Cards Grid */}
           {loading ? (
-            <p style={{ color: 'var(--color-slate)', textAlign: 'center', padding: '3rem' }}>Loading calendar events…</p>
+            <p style={{ color: '#CBD5E1', textAlign: 'center', padding: '3rem' }}>Loading calendar events…</p>
           ) : events.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '4rem 1rem', background: 'var(--color-charcoal-soft)', borderRadius: '16px', border: '1px solid var(--color-hairline)' }}>
-              <CalendarIcon size={48} color="var(--color-slate)" style={{ marginBottom: '1rem' }} />
+              <CalendarIcon size={48} color="#94A3B8" style={{ marginBottom: '1rem' }} />
               <h3 style={{ color: '#fff' }}>No Scheduled Events</h3>
-              <p style={{ color: 'var(--color-slate)' }}>Check back soon or ask an admin to add upcoming events.</p>
+              <p style={{ color: '#CBD5E1' }}>Check back soon or ask an admin to add upcoming events.</p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.75rem' }}>
@@ -152,19 +152,19 @@ export default function CalendarPage() {
                       padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
-                      justify: 'space-between',
+                      justifyContent: 'space-between',
                       position: 'relative',
                     }}
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                        <span style={{ fontSize: '0.8rem', background: 'rgba(245,158,11,0.15)', color: 'var(--color-amber)', padding: '0.25rem 0.6rem', borderRadius: '6px', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.82rem', background: 'rgba(245,158,11,0.2)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)', padding: '0.25rem 0.6rem', borderRadius: '6px', fontWeight: 600 }}>
                           {formattedDate}
                         </span>
                         {isAdmin && (
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button className="icon-btn" onClick={() => setEventModal({ open: true, data: ev })} title="Edit Event">
-                              <Edit2 size={14} color="var(--color-amber)" />
+                              <Edit2 size={14} color="#F59E0B" />
                             </button>
                             <button className="icon-btn" onClick={() => handleDeleteEvent(ev.id)} title="Delete Event">
                               <Trash2 size={14} color="#EF4444" />
@@ -175,17 +175,17 @@ export default function CalendarPage() {
 
                       <h3 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.75rem' }}>{ev.title}</h3>
 
-                      <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.25rem' }}>
+                      <p style={{ color: '#CBD5E1', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.25rem' }}>
                         {ev.description || 'No additional details provided.'}
                       </p>
                     </div>
 
-                    <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--color-hairline)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                    <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--color-hairline)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem', color: '#CBD5E1' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Clock size={14} color="var(--color-amber)" /> {formattedTime}
+                        <Clock size={14} color="#F59E0B" /> {formattedTime}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <MapPin size={14} color="var(--color-amber)" /> {ev.location || 'Location to be announced'}
+                        <MapPin size={14} color="#F59E0B" /> {ev.location || 'Location to be announced'}
                       </div>
                     </div>
                   </motion.div>
