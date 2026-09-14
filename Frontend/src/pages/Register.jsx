@@ -9,18 +9,25 @@ export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    setMessage('');
     setLoading(true);
     try {
-      await register({ name, email, password });
-      navigate('/');
+      const res = await register({ name, email, password, role });
+      if (role === 'admin') {
+        setMessage('Registration successful! Your admin account is pending approval by an administrator.');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
-      setError(err?.response?.data?.message || 'Could not create your account.');
+      setError(err?.response?.data?.error || 'Could not create your account.');
     } finally {
       setLoading(false);
     }
@@ -63,7 +70,20 @@ export default function Register() {
           minLength={8}
         />
 
+        <label className="field-label" htmlFor="role">Account Type</label>
+        <select
+          id="role"
+          className="field-input"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          style={{ background: 'var(--color-charcoal-soft)', color: 'var(--color-white)', border: '1px solid var(--color-hairline)' }}
+        >
+          <option value="user" style={{ background: 'var(--color-charcoal)' }}>Normal User</option>
+          <option value="admin" style={{ background: 'var(--color-charcoal)' }}>Admin (Requires Approval)</option>
+        </select>
+
         {error && <p className="auth-error">{error}</p>}
+        {message && <div style={{ color: '#10b981', padding: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>{message}</div>}
 
         <button type="submit" className="btn donation-submit" disabled={loading}>
           {loading ? 'Creating account…' : 'Create Account'}
