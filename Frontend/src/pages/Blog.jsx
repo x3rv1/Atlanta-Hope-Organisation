@@ -68,34 +68,34 @@ export default function Blog() {
           {posts.map((post) => {
             const img = post.image_url || post.image || 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80';
             const dateStr = post.created_at ? post.created_at.slice(0, 10) : (post.date || 'Recent');
-            
+
             return (
-              <motion.article 
-                className="blog-card" 
+              <motion.article
+                className="blog-card"
                 key={post.id}
-                whileHover={{ y: -8, boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.5)' }}
+                whileHover={{ y: -8, boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.6)' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 onClick={() => navigate(`/blog/${post.id}`)}
                 style={{ cursor: 'pointer', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
               >
                 <div style={{ width: '100%', height: '220px', overflow: 'hidden' }}>
-                  <img 
-                    src={img} 
-                    alt={post.title} 
-                    loading="lazy" 
+                  <img
+                    src={img}
+                    alt={post.title}
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
                   />
                 </div>
-                <div className="blog-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div className="blog-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem' }}>
                   <div>
-                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--color-slate)', marginBottom: '0.5rem' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Calendar size={13} /> {dateStr}</span>
-                      {post.author && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><User size={13} /> {post.author}</span>}
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#94A3B8', marginBottom: '0.75rem' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}><Calendar size={14} color="#F59E0B" /> {dateStr}</span>
+                      {post.author && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}><User size={14} color="#F59E0B" /> {post.author}</span>}
                     </div>
-                    <h3 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.75rem', lineHeight: '1.4' }}>{post.title}</h3>
-                    <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem', lineHeight: '1.6' }}>{post.excerpt}</p>
+                    <h3 style={{ fontSize: '1.3rem', color: '#FFFFFF', marginBottom: '0.75rem', lineHeight: '1.4' }}>{post.title}</h3>
+                    <p style={{ color: '#CBD5E1', fontSize: '0.98rem', lineHeight: '1.65' }}>{post.excerpt}</p>
                   </div>
-                  <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--color-amber)', fontWeight: 600, fontSize: '0.9rem' }}>
+                  <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#F59E0B', fontWeight: 600, fontSize: '0.95rem' }}>
                     Read Article <ArrowRight size={16} />
                   </div>
                 </div>
