@@ -35,6 +35,7 @@ def seed_data():
             description="Providing high-grade bio-sand filters and clean drinking water access to rural communities in Kenya and Georgia.",
             target_amount=15000.0,
             raised_amount=4500.0,
+            image_url="https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80",
             status="active"
         )
         project2 = Project(
@@ -42,6 +43,7 @@ def seed_data():
             description="Funding computers, books, audio-visual gear, and tutoring for youth after-school enrichment programs.",
             target_amount=8000.0,
             raised_amount=5200.0,
+            image_url="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
             status="active"
         )
         project3 = Project(
@@ -49,6 +51,7 @@ def seed_data():
             description="Providing hot nutritious meals and family emergency food packages in downtown Atlanta.",
             target_amount=5000.0,
             raised_amount=5000.0,
+            image_url="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80",
             status="completed"
         )
         db.session.add_all([project1, project2, project3])
