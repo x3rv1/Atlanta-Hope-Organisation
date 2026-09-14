@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { loginRequest, registerRequest } from '../api/client';
+import { loginRequest, registerRequest, fetchMe } from '../api/client';
 
 const AuthContext = createContext(null);
 
@@ -9,26 +9,47 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On load, trust whatever token is stored; a real app would also verify
-    // it against a /auth/me endpoint. Kept minimal here since that route
-    // wasn't part of the spec.
-    setLoading(false);
-  }, []);
+    async function loadUser() {
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetchMe();
+        if (res?.data) {
+          setUser(res.data);
+        }
+      } catch (err) {
+        // Token invalid or expired
+        localStorage.removeItem('aho_token');
+        setToken(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUser();
+  }, [token]);
 
   async function login(credentials) {
     const data = await loginRequest(credentials);
-    localStorage.setItem('aho_token', data.token);
-    setToken(data.token);
-    setUser(data.user ?? null);
+    const authData = data?.data;
+    if (authData?.access_token) {
+      localStorage.setItem('aho_token', authData.access_token);
+      setToken(authData.access_token);
+      setUser(authData.user ?? null);
+    }
     return data;
   }
 
   async function register(details) {
     const data = await registerRequest(details);
-    if (data.token) {
-      localStorage.setItem('aho_token', data.token);
-      setToken(data.token);
-      setUser(data.user ?? null);
+    const authData = data?.data;
+    if (authData?.access_token && authData?.user?.status === 'approved') {
+      localStorage.setItem('aho_token', authData.access_token);
+      setToken(authData.access_token);
+      setUser(authData.user ?? null);
     }
     return data;
   }
@@ -39,8 +60,21 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  const isAdmin = user?.role === 'admin' && user?.status === 'approved';
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        register,
+        logout,
+        isAuthenticated: !!token && !!user,
+        isAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
