@@ -28,7 +28,7 @@ class ProjectService:
         return data, None
 
     @staticmethod
-    def create_project(title, description, target_amount, status='active'):
+    def create_project(title, description, target_amount, status='active', image_url=None):
         if not title or not description:
             return None, "Title and description are required"
             
@@ -46,6 +46,7 @@ class ProjectService:
             title=title,
             description=description,
             target_amount=target_amount,
+            image_url=image_url,
             status=status
         )
         
@@ -58,7 +59,7 @@ class ProjectService:
             return None, f"Database error: {str(e)}"
 
     @staticmethod
-    def update_project(project_id, title=None, description=None, target_amount=None, status=None):
+    def update_project(project_id, title=None, description=None, target_amount=None, status=None, image_url=None):
         project = db.session.get(Project, project_id)
         if not project:
             return None, "Project not found"
@@ -67,6 +68,8 @@ class ProjectService:
             project.title = title
         if description:
             project.description = description
+        if image_url is not None:
+            project.image_url = image_url
         if target_amount is not None:
             try:
                 target_amount = float(target_amount)
