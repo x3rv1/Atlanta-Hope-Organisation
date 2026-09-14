@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// All requests go through /api — Vite's dev proxy forwards to Flask backend locally
+// All requests go through VITE_API_BASE_URL or fallback to local /api proxy
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
