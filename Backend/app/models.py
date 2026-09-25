@@ -114,6 +114,7 @@ class Donation(db.Model):
     donor_name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    mpesa_receipt_number = db.Column(db.String(50), nullable=True)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     def to_dict(self):
@@ -123,6 +124,7 @@ class Donation(db.Model):
             'amount': self.amount,
             'project_id': self.project_id,
             'projectName': self.project.title if self.project else 'General Fund',
+            'mpesa_receipt_number': self.mpesa_receipt_number,
             'timestamp': self.timestamp.isoformat() if self.timestamp else None,
             'date': self.timestamp.strftime('%Y-%m-%d') if self.timestamp else ''
         }
@@ -148,17 +150,23 @@ class MpesaTransaction(db.Model):
     
     checkout_request_id = db.Column(db.String(100), primary_key=True)
     donor_name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=True)
     amount = db.Column(db.Float, nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
     status = db.Column(db.String(20), default='pending') # pending, completed, failed
+    mpesa_receipt_number = db.Column(db.String(50), nullable=True)
+    result_desc = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     def to_dict(self):
         return {
             'checkout_request_id': self.checkout_request_id,
             'donor_name': self.donor_name,
+            'phone_number': self.phone_number,
             'amount': self.amount,
             'project_id': self.project_id,
             'status': self.status,
+            'mpesa_receipt_number': self.mpesa_receipt_number,
+            'result_desc': self.result_desc,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

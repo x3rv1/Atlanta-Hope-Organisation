@@ -107,12 +107,14 @@ def test_mpesa_callback_success(client, auth_headers):
         # Check transaction state
         txn = db.session.get(MpesaTransaction, "checkout_req_success")
         assert txn.status == "completed"
+        assert txn.mpesa_receipt_number == "NLJ7RT6123"
         
         # Check donation recorded
         donations = Donation.query.filter_by(project_id=project_id).all()
         assert len(donations) == 1
         assert donations[0].donor_name == "David"
         assert donations[0].amount == 200.0
+        assert donations[0].mpesa_receipt_number == "NLJ7RT6123"
         
         # Check project raised_amount
         project = db.session.get(Project, project_id)
@@ -160,3 +162,26 @@ def test_mpesa_callback_failure(client, auth_headers):
         # Project raised_amount must remain 0
         project = db.session.get(Project, project_id)
         assert project.raised_amount == 0.0
+
+def test_get_mpesa_status(client, auth_headers):
+    project_id = create_active_project(client, auth_headers)
+    
+    with client.application.app_context():
+        txn = MpesaTransaction(
+            checkout_request_id="checkout_req_status_test",
+            donor_name="Sarah",
+            amount=500.0,
+            project_id=project_id,
+            status="completed",
+            mpesa_receipt_number="ABC123XYZ"
+        )
+        db.session.add(txn)
+        db.session.commit()
+        
+    response = client.get('/api/payments/mpesa/status/checkout_req_status_test')
+    assert response.status_code == 200
+    res_data = response.get_json()['data']
+    assert res_data['checkout_request_id'] == "checkout_req_status_test"
+    assert res_data['status'] == "completed"
+    assert res_data['mpesa_receipt_number'] == "ABC123XYZ"
+    assert res_data['amount'] == 500.0

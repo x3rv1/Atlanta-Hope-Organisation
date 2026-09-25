@@ -156,10 +156,17 @@ export async function fetchSupporters() {
   return data;
 }
 
-export async function initiateMpesaStkPush({ phoneNumber, amount }) {
+export async function initiateMpesaStkPush({ phoneNumber, amount, donorName, projectId }) {
   const { data } = await api.post('/payments/mpesa/stkpush', {
     phoneNumber,
     amount,
+    donor_name: donorName,
+    project_id: projectId,
   });
+  return data;
+}
+
+export async function checkMpesaStatus(checkoutRequestId) {
+  const { data } = await api.get(`/payments/mpesa/status/${checkoutRequestId}`);
   return data;
 }

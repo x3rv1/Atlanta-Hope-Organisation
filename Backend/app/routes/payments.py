@@ -40,28 +40,44 @@ def format_phone_number(phone):
 
 @payments_bp.route('/mpesa/stkpush', methods=['POST'])
 def mpesa_stkpush():
-    data = request.get_json(silent=True)
-    is_valid, err = validate_required_fields(data, ['phone', 'amount', 'donor_name', 'project_id'])
-    if not is_valid:
-        return error_response(err, 400)
+    data = request.get_json(silent=True) or {}
+    
+    raw_phone = data.get('phone') or data.get('phoneNumber')
+    if not raw_phone:
+        return error_response("Phone number is required", 400)
         
-    phone = format_phone_number(data['phone'])
-    donor_name = data['donor_name']
+    phone = format_phone_number(raw_phone)
+    donor_name = data.get('donor_name') or data.get('donorName') or 'Anonymous Donor'
     
     try:
-        amount = float(data['amount'])
+        amount = float(data.get('amount', 0))
         if amount <= 0:
             return error_response("Amount must be positive", 400)
     except (ValueError, TypeError):
         return error_response("Amount must be a valid number", 400)
         
-    project_id = data['project_id']
-    # Check if project exists
-    project = db.session.get(Project, project_id)
-    if not project:
-        return error_response("Project not found", 400)
-    if project.status != 'active':
-        return error_response(f"Cannot donate to project because its status is '{project.status}'", 400)
+    project_id = data.get('project_id') or data.get('projectId')
+    if project_id:
+        project = db.session.get(Project, project_id)
+        if not project:
+            return error_response("Project not found", 400)
+        if project.status != 'active':
+            return error_response(f"Cannot donate to project because its status is '{project.status}'", 400)
+    else:
+        project = Project.query.filter_by(status='active').first()
+        if not project:
+            project = Project.query.first()
+            if not project:
+                project = Project(
+                    title="General Hope Fund",
+                    description="General organizational support and community outreach.",
+                    target_amount=1000000.0,
+                    raised_amount=0.0,
+                    status="active"
+                )
+                db.session.add(project)
+                db.session.commit()
+        project_id = project.id
         
     # Safaricom configurations
     shortcode = current_app.config.get('MPESA_SHORTCODE')
@@ -115,6 +131,7 @@ def mpesa_stkpush():
             txn = MpesaTransaction(
                 checkout_request_id=checkout_request_id,
                 donor_name=donor_name,
+                phone_number=phone,
                 amount=amount,
                 project_id=project_id,
                 status='pending'
@@ -131,6 +148,72 @@ def mpesa_stkpush():
         db.session.rollback()
         logger.error(f"M-Pesa STK push error: {str(e)}")
         return error_response(f"Payment request failed: {str(e)}", 500)
+
+@payments_bp.route('/mpesa/status/<checkout_request_id>', methods=['GET'])
+def get_mpesa_status(checkout_request_id):
+    txn = db.session.get(MpesaTransaction, checkout_request_id)
+    if not txn:
+        return error_response("Transaction not found", 404)
+        
+    # If transaction is still pending, attempt a query to Safaricom STK Query API
+    if txn.status == 'pending':
+        shortcode = current_app.config.get('MPESA_SHORTCODE')
+        passkey = current_app.config.get('MPESA_PASSKEY')
+        stk_query_url = current_app.config.get('MPESA_STK_QUERY_URL', 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query')
+        
+        if shortcode and passkey and stk_query_url:
+            try:
+                access_token = generate_access_token()
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                password_str = f"{shortcode}{passkey}{timestamp}"
+                password = base64.b64encode(password_str.encode('utf-8')).decode('utf-8')
+                
+                headers = {
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json'
+                }
+                payload = {
+                    'BusinessShortCode': int(shortcode),
+                    'Password': password,
+                    'Timestamp': timestamp,
+                    'CheckoutRequestID': checkout_request_id
+                }
+                
+                res = requests.post(stk_query_url, json=payload, headers=headers, timeout=10)
+                if res.status_code == 200:
+                    q_data = res.json()
+                    res_code = str(q_data.get('ResultCode'))
+                    res_desc = q_data.get('ResultDesc', '')
+                    
+                    if res_code == '0':
+                        txn.status = 'completed'
+                        txn.result_desc = res_desc
+                        # Extract receipt if present
+                        receipt = q_data.get('MpesaReceiptNumber')
+                        if receipt:
+                            txn.mpesa_receipt_number = receipt
+                        
+                        # Create donation if not exists
+                        donation = Donation(
+                            donor_name=txn.donor_name,
+                            amount=txn.amount,
+                            project_id=txn.project_id,
+                            mpesa_receipt_number=txn.mpesa_receipt_number
+                        )
+                        db.session.add(donation)
+                        
+                        project = db.session.get(Project, txn.project_id)
+                        if project:
+                            project.raised_amount += txn.amount
+                        db.session.commit()
+                    elif res_code not in ['0', 'None'] and 'being processed' not in res_desc.lower():
+                        txn.status = 'failed'
+                        txn.result_desc = res_desc
+                        db.session.commit()
+            except Exception as e:
+                logger.warning(f"STK Push status query failed for {checkout_request_id}: {str(e)}")
+
+    return success_response(data=txn.to_dict())
 
 @payments_bp.route('/callback', methods=['POST'])
 def mpesa_callback():
@@ -152,15 +235,28 @@ def mpesa_callback():
         logger.error(f"M-Pesa Callback checkout_request_id {checkout_request_id} not found in DB")
         return jsonify({"ResultCode": 0, "ResultDesc": "Transaction not found, logged"}), 200
         
+    txn.result_desc = result_desc
+
     if result_code == 0:
         # Success payment
         txn.status = 'completed'
+        
+        # Extract metadata item (MpesaReceiptNumber)
+        receipt_number = None
+        callback_metadata = stk_callback.get('CallbackMetadata', {}).get('Item', [])
+        for item in callback_metadata:
+            if item.get('Name') == 'MpesaReceiptNumber':
+                receipt_number = item.get('Value')
+                break
+                
+        txn.mpesa_receipt_number = receipt_number
         
         # Save to Donation Model
         donation = Donation(
             donor_name=txn.donor_name,
             amount=txn.amount,
-            project_id=txn.project_id
+            project_id=txn.project_id,
+            mpesa_receipt_number=receipt_number
         )
         db.session.add(donation)
         
@@ -171,7 +267,7 @@ def mpesa_callback():
             
         try:
             db.session.commit()
-            logger.info(f"Payment successful: CheckoutRequestID {checkout_request_id} updated to completed.")
+            logger.info(f"Payment successful: CheckoutRequestID {checkout_request_id} updated to completed. Receipt: {receipt_number}")
             return jsonify({"ResultCode": 0, "ResultDesc": "Callback processed successfully"}), 200
         except Exception as e:
             db.session.rollback()
